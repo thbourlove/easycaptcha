@@ -4,6 +4,7 @@ namespace Eleme\EasyCaptcha;
 class Factory
 {
     private $font = null;
+    private $fontfile;
 
     public function __construct($fontfile = null)
     {
