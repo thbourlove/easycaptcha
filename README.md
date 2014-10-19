@@ -17,12 +17,15 @@ php captcha lib.
 ## Example
 ```php
 <?php
+
+use Eleme\EasyCaptcha\Phrase\Factory as PhraseFactory;
 use Eleme\EasyCaptcha\Factory;
 
-require 'vendor/autoload.php';
+require __DIR__.'/../vendor/autoload.php';
 header('Content-Type: image/jpeg');
 $factory = new Factory();
-$factory->render('asdfghjkl;');
+$phrase = new PhraseFactory();
+$factory->render($phrase->build());
 ```
 
 ## Demo
