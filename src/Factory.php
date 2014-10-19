@@ -17,7 +17,7 @@ class Factory
         $image = $this->createImage($this->getFontWidth() * $len, $this->getFontHeight());
         $this->drawBackground($image);
         $this->writePhrase($image, $phrase);
-        imagejpeg($image, $path, 100);
+        imagejpeg($image, $path, 90);
     }
 
     private function drawBackground($image)
