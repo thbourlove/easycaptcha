@@ -7,4 +7,4 @@ require __DIR__.'/../vendor/autoload.php';
 header('Content-Type: image/jpeg');
 $factory = new Factory();
 $phrase = new PhraseFactory();
-$factory->render($phrase->build());
+$factory->render($phrase->build(), null, 24, 36);
