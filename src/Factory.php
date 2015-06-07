@@ -15,9 +15,11 @@ class Factory
     {
         $len = strlen($phrase);
         $image = $this->createImage($fontWidth * $len, $fontHeight);
-        $this->drawBackground($image);
+        $bg = $this->drawBackground($image);
         $this->writePhrase($image, $phrase, $fontWidth, $fontHeight);
         $this->drawLine($image, $fontWidth * $len, $fontHeight);
+        $this->drawLine($image, $fontWidth * $len, $fontHeight);
+        $image = $this->distort($image, $fontWidth * $len, $fontHeight, $bg);
         imagejpeg($image, $path, 90);
     }
 
@@ -25,6 +27,7 @@ class Factory
     {
         $backgroundColor = $this->getRandColor($image, 200, 255);
         imagefill($image, 0, 0, $backgroundColor);
+        return $backgroundColor;
     }
 
     private function writePhrase($image, $phrase, $fontWidth, $fontHeight)
@@ -47,6 +50,48 @@ class Factory
     private function getRandColor($image, $min = 0, $max = 255)
     {
         return imagecolorallocate($image, mt_rand($min, $max), mt_rand($min, $max), mt_rand($min, $max));
+    }
+
+    private function distort($image, $width, $height, $bg)
+    {
+        $contents = imagecreatetruecolor($width, $height);
+        $X          = mt_rand(0, $width);
+        $Y          = mt_rand(0, $height);
+        $phase      = mt_rand(0, 10);
+        $scale      = 1.1 + mt_rand(0, 10000) / 30000;
+        for ($x = 0; $x < $width; $x++) {
+            for ($y = 0; $y < $height; $y++) {
+                $Vx = $x - $X;
+                $Vy = $y - $Y;
+                $Vn = sqrt($Vx * $Vx + $Vy * $Vy);
+
+                if ($Vn != 0) {
+                    $Vn2 = $Vn + 4 * sin($Vn / 30);
+                    $nX  = $X + ($Vx * $Vn2 / $Vn);
+                    $nY  = $Y + ($Vy * $Vn2 / $Vn);
+                } else {
+                    $nX = $X;
+                    $nY = $Y;
+                }
+                $nY = $nY + $scale * sin($phase + $nX * 0.2);
+
+                $p = $this->getCol($image, round($nX), round($nY), $bg);
+                imagesetpixel($contents, $x, $y, $p);
+            }
+        }
+
+        return $contents;
+    }
+
+    protected function getCol($image, $x, $y, $background)
+    {
+        $L = imagesx($image);
+        $H = imagesy($image);
+        if ($x < 0 || $x >= $L || $y < 0 || $y >= $H) {
+            return $background;
+        }
+
+        return imagecolorat($image, $x, $y);
     }
 
     private function drawLine($image, $width, $height)
