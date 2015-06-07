@@ -17,6 +17,7 @@ class Factory
         $image = $this->createImage($fontWidth * $len, $fontHeight);
         $this->drawBackground($image);
         $this->writePhrase($image, $phrase, $fontWidth, $fontHeight);
+        $this->drawLine($image, $fontWidth * $len, $fontHeight);
         imagejpeg($image, $path, 90);
     }
 
@@ -46,6 +47,17 @@ class Factory
     private function getRandColor($image, $min = 0, $max = 255)
     {
         return imagecolorallocate($image, mt_rand($min, $max), mt_rand($min, $max), mt_rand($min, $max));
+    }
+
+    private function drawLine($image, $width, $height)
+    {
+        $tcol = imagecolorallocate($image, mt_rand(100, 255), mt_rand(100, 255), mt_rand(100, 255));
+        $Xa = 0;
+        $Ya = mt_rand(0, $height);
+        $Xb = $width;
+        $Yb = mt_rand(0, $height);
+        imagesetthickness($image, mt_rand(1, 3));
+        imageline($image, $Xa, $Ya, $Xb, $Yb, $tcol);
     }
 
     private function getFontfile()
